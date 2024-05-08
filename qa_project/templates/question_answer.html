@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Bot</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4b6cb7, #e63e75);
+        }
+
+        .container {
+            width: 80%;
+            margin: 100px auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4b6cb7;
+            text-align: center;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 15px;
+            border-radius: 25px;
+            border: none;
+            background-color: #f0f0f0;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            outline: none;
+            transition: box-shadow 0.3s ease-in-out;
+        }
+
+        input[type="text"]:focus {
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        button {
+            background-color: #e63e75;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #d13164;
+        }
+
+        h2 {
+            color: #e63e75;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Alumni Bot</h1>
+    <form id="questionForm" method="GET">
+        {% csrf_token %}
+        <label for="question">Enter your question:</label><br>
+        <input type="text" id="question" name="question" required placeholder="Ask me anything...">
+        <button type="button" id="voiceButton">Voice Input</button>
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if question %}
+    <h2>Answer:</h2>
+    <p>{{ answer }}</p>
+    {% endif %}
+
+    {% if error %}
+    <p>{{ error }}</p>
+    {% endif %}
+
+    <script>
+        const voiceButton = document.getElementById('voiceButton');
+        const questionInput = document.getElementById('question');
+
+        voiceButton.addEventListener('click', () => {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.lang = 'en-US';
+
+                recognition.onresult = (event) => {
+                    const result = event.results[0][0].transcript;
+                    questionInput.value = result;
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                };
+
+                recognition.start();
+            } else {
+                alert('Speech recognition is not supported in this browser.');
+            }
+        });
+    </script>
+</body>
+</html>
